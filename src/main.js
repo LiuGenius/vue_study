@@ -34,6 +34,7 @@ import 'vant/lib/pull-refresh/style';
 import 'vant/lib/tabbar/style';
 import 'vant/lib/tabbar-item/style';
 import 'vant/lib/nav-bar/style';
+import 'vant/lib/button/style';
 Vue.use(Swipe)
 	.use(SwipeItem)
 	.use(Image)
