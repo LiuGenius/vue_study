@@ -18,7 +18,7 @@ import {
 	PullRefresh,
 	Field,
 	CellGroup,
-	Button
+	Button,Tabbar, TabbarItem,NavBar
 } from 'vant';
 
 
@@ -31,6 +31,9 @@ import 'vant/lib/tab/style';
 import 'vant/lib/list/style';
 import 'vant/lib/cell/style';
 import 'vant/lib/pull-refresh/style';
+import 'vant/lib/tabbar/style';
+import 'vant/lib/tabbar-item/style';
+import 'vant/lib/nav-bar/style';
 Vue.use(Swipe)
 	.use(SwipeItem)
 	.use(Image)
@@ -40,7 +43,7 @@ Vue.use(Swipe)
 	.use(List)
 	.use(Cell)
 	.use(Sticky)
-	.use(PullRefresh).use(Field).use(CellGroup).use(Button);
+	.use(PullRefresh).use(Field).use(CellGroup).use(Button).use(Tabbar).use(TabbarItem).use(NavBar);
 
 Vue.config.productionTip = false
 

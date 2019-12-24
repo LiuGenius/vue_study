@@ -11,10 +11,25 @@ const routes = [
     component: login
   },
   {
-    path: '/main',
-    name: 'main',
-    component: () => import(/* webpackChunkName: "about" */ '../views/main.vue')
-  }
+    path: '/index',
+    name: 'index',
+    component: () => import(/* webpackChunkName: "about" */ '../views/index.vue')
+  },
+  {
+    path: '/task',
+    name: 'task',
+    component: () => import(/* webpackChunkName: "about" */ '../views/task.vue')
+  },
+  {
+    path: '/package',
+    name: 'package',
+    component: () => import(/* webpackChunkName: "about" */ '../views/package.vue')
+  },
+  {
+    path: '/me',
+    name: 'me',
+    component: () => import(/* webpackChunkName: "about" */ '../views/me.vue')
+  },
 ]
 
 const router = new VueRouter({

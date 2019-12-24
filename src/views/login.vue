@@ -21,14 +21,20 @@
 	import {
 		Notify
 	} from 'vant';
-	
+
 	import 'vant/lib/notify/style';
 	import {
 		post_
 	} from '../../public/js/utilHelper'
-	
+
 	Vue.use(post_).use(Notify);
 	export default {
+		mounted() {
+			var token = localStorage.getItem('access-token');
+			if (token != '') {
+				// this.$router.push('index')
+			}
+		},
 		methods: {
 			login: function() {
 				var that = this;
@@ -40,10 +46,13 @@
 				}, res => {
 					that.isLogin = false;
 					if (res.success) {
-						localStorage.setItem('access-token',res.data['access-token'])
-						Notify({ type: 'success', message: '登录成功' });
-						that.$router.push('/main')
-					}else{
+						localStorage.setItem('access-token', res.data['access-token'])
+						Notify({
+							type: 'success',
+							message: '登录成功'
+						});
+						that.$router.push('/index')
+					} else {
 						Notify({
 							type: 'danger',
 							message: res.message
@@ -56,8 +65,8 @@
 			return {
 				errorMsg: '',
 				isLogin: false,
-				username: '',
-				password: ''
+				username: '15111475403',
+				password: '123456'
 			}
 		},
 

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export let H_url = 'http://fans.yc699.com/v1/'
+export let H_url = 'http://fans.20b.me/v1/'
 
 //post_请求
 export function post_(url,data,callback){

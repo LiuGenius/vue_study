@@ -1,19 +1,21 @@
 <template>
 	<div>
-
+		
+		<van-nav-bar style="height: 45px;" title="首页"/>
 		<van-sticky>
-			<van-swipe style="height: 180px;" :autoplay="3000" indicator-color="white">
-				<van-swipe-item style="height: 180px;" v-for="banner in banners">
+			
+			<van-swipe style="height: 150px;" :autoplay="3000" indicator-color="white">
+				<van-swipe-item style="height: 150px;" v-for="banner in banners">
 					<van-image :src="banner.img" fit="fill" />
 				</van-swipe-item>
 			</van-swipe>
 		</van-sticky>
 
+		<van-image width="40" height="40" :src="icon.news_img" style="margin-left: 20px;margin-top: 20px;"></van-image>
 
-		<van-icon name="chat-o" info="99+" size="50" style="margin-left: 20px;margin-top: 20px;" />
-		<van-sticky :offset-top="180">
-			<van-tabs animated @click="onClick">
-				<van-tab v-for="title in titles">
+		<van-sticky :offset-top="150">
+			<van-tabs animated @click="onClick" title-active-color="#FF3159">
+				<van-tab v-for="title in titles" :title="title.name">
 					<div slot="title" style="text-align: center;">
 						{{title.name}}
 						<van-image style="padding-top: 4px;" width="12" height="12" :src="title.logo"></van-image>
@@ -26,15 +28,16 @@
 		<van-pull-refresh v-model="isLoading" @refresh="onRefresh">
 			<van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
 				<van-cell v-for="data in list">
-					<div style="height: 90px;background: #fff;">
-						<img :src="data.img" style="float: left;height: 60px;margin-left: 10px;margin-top: 15px;width: 60px;">
-						<div style="display: inline-block;margin-left: 4px;">
+					<div style="background: #fff;">
+						<van-image :src="data.img" class="item_image"></van-image>
+						<!-- <img :src="data.img" style="float: left;height: 60px;margin-left: 10px;margin-top: 15px;width: 60px;"> -->
+						<div style="display: inline-block;margin-left: 12px;">
 							<p style="margin-left: 10px;margin-top: 10px;font-size: 12px;">要求: {{data.task_name}}</p>
 							<p style="margin-left: 10px;margin-top: -4px;font-size: 12px;">需方: {{data.name}}</p>
 							<p style="margin-left: 10px;margin-top: -4px;border: #FF3159 solid 1px; border-radius: 12px;color: #FF3159;text-align: center;font-size: 12px;width: 100px;">剩余:
 								{{data.count}}</p>
 						</div>
-						<div style="display: inline-block;margin-left: 10px;height: 90px;float: right;margin-right: 20px;">
+						<div style="display: inline-block;margin-left: 10px;float: right;margin-right: 20px;">
 							<p style="height: 20px;line-height: 45px;font-size: 14px;font-weight: bold;color: #FF3159;text-align: center;">¥{{data.money}}元</p>
 							<p @click="receiveTask(data.ID,index)" style="float: inherit;height: 30px;color: #FFFFFF;background: #FF3159;font-size: 12px;width: 60px;margin-top: 15px;text-align: center;line-height: 30px;border-radius: 6px;">接单</p>
 						</div>
@@ -44,6 +47,24 @@
 		</van-pull-refresh>
 
 
+		<van-tabbar route="" style="height: 60px;line-height: 60px;">
+			<van-tabbar-item to="/index">
+				<span style="color: #FF3159;">首页</span>
+				<img slot="icon"  :src="icon.active1"></img>
+			</van-tabbar-item>
+			<van-tabbar-item to="/task">
+				<span>任务</span>
+				<img slot="icon"  :src="icon.inactive2"></img>
+			</van-tabbar-item>
+			<van-tabbar-item to="/package">
+				<span>购买</span>
+				<img slot="icon"  :src="icon.inactive3"></img>
+			</van-tabbar-item>
+			<van-tabbar-item to="/me">
+				<span>我的</span>
+				<img slot="icon"  :src="icon.inactive4"></img>
+			</van-tabbar-item>
+		</van-tabbar>
 
 
 	</div>
@@ -69,7 +90,19 @@
 				loading: false,
 				finished: false,
 				isLoading: false,
-				titles: []
+				titles: [],
+				page: 0,
+				pageSize: 15,
+				lastIndex: 0,
+				firstLoad: true,
+				active: 0,
+				icon: {
+					active1: require('../../public/img/icon_tab_sy_2.png'),
+					inactive2: require('../../public/img/icon_tab_rw_1.png'),
+					inactive3: require('../../public/img/icon_tab_gm_1.png'),
+					inactive4: require('../../public/img/icon_tab_wd_1.png'),
+					news_img: require('../../public/img/icon_news.png')
+				},
 			}
 		},
 		mounted() {
@@ -78,12 +111,21 @@
 		methods: {
 			onClick(name, title) {
 				var that = this;
+
+				if (title == 'onLoad') {} else if (title != '') {
+					that.page = 0;
+				}
+				that.lastIndex = name;
 				post_('home/task-list?access-token=' + localStorage.getItem('access-token'), {
 					platform: that.titles[name].ID,
-					name: ''
+					name: '',
+					page: that.page,
+					pageSize: that.pageSize
 				}, res => {
 					if (res.success) {
-						that.list.splice(0, that.list.length);
+						if (that.page == 0) {
+							that.list.splice(0, that.list.length);
+						}
 						for (var i = 0; i < res.data.length; i++) {
 							var dataitem = res.data[i];
 							that.list.push(that.DataItem(
@@ -97,41 +139,25 @@
 								"0.5"
 							))
 						}
-
+						if (res.data.length < that.pageSize) {
+							that.finished = true;
+						} else {
+							that.finished = false;
+						}
+						that.loading = false;
+						that.isLoading = false;
 					}
-
 				})
-
 			},
 			onLoad() {
-				// 加载状态结束
-				this.loading = false;
-				// 数据全部加载完成
-				this.finished = true;
-				// // 异步更新数据
-				// setTimeout(() => {
-				// 	for (let i = 0; i < 10; i++) {
-				// 		this.list.push(this.list.length + 1);
-				// 	}
-				// 	// 加载状态结束
-				// 	this.loading = false;
-
-				// 	// 数据全部加载完成
-				// 	if (this.list.length >= 40) {
-				// 		this.finished = true;
-				// 	}
-				// }, 500);
+				if (this.list.length >= this.pageSize) {
+					this.page = this.page + 1;
+					this.onClick(this.lastIndex, "onLoad");
+				}
 			},
 			onRefresh() {
-				setTimeout(() => {
-					Notify({
-						type: 'success',
-						message: '刷新成功'
-					});
-					this.isLoading = false;
-					this.list.splice(15, this.list.length - 1)
-					this.finished = false;
-				}, 500);
+				this.page = 0;
+				this.onClick(this.lastIndex, "");
 			},
 			getHomeData() {
 				var that = this;
@@ -147,14 +173,23 @@
 							title.status,
 							title.sort
 						))
+
+
 					};
+
 					//初始化轮播图
 					for (var i = 0; i < res.data.banner.length; i++) {
 						var data = res.data.banner[i];
 						that.banners.push(that.banner(data.image, data.link))
 					}
-					console.log(that.banners)
 
+					if (that.firstLoad) {
+						that.onClick(0, 'firstLoad')
+					}
+
+					that.isLoading = false;
+					that.loading = false;
+					that.finished = true;
 				})
 			},
 			Title(ID, name, logo, logo_2, status, sort) {
@@ -184,12 +219,34 @@
 				data.task_name = task_name;
 				data.money = money;
 				return data;
-			}
+			},
+			receiveTask(id, index) {
+				var that = this;
+				post_('task/receive-task?access-token=' + localStorage.getItem('access-token'), {
+					task_id: id
+				}, res => {
+					if (res.success) {
+						Notify({
+							type: 'success',
+							message: '任务接取成功'
+						});
+						that.datas.splice(index, 1)
+					} else {
+						Notify({
+							type: 'danger',
+							message: res.message
+						});
+					}
+				})
+			},
+			
 		}
 
 	}
 </script>
 
 <style scoped>
-
+	.item_image {
+		width: 60px;
+	}
 </style>
