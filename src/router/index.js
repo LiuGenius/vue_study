@@ -30,6 +30,16 @@ const routes = [
     name: 'me',
     component: () => import(/* webpackChunkName: "about" */ '../views/me.vue')
   },
+  {
+    path: '/updata_history',
+    name: 'updata_history',
+    component: () => import(/* webpackChunkName: "about" */ '../views/updata_history.vue')
+  },
+  {
+    path: '/my_team',
+    name: 'my_team',
+    component: () => import(/* webpackChunkName: "about" */ '../views/my_team.vue')
+  },
 ]
 
 const router = new VueRouter({

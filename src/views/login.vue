@@ -65,7 +65,7 @@
 			return {
 				errorMsg: '',
 				isLogin: false,
-				username: '15111475403',
+				username: '13088889999',
 				password: '123456'
 			}
 		},

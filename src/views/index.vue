@@ -6,7 +6,7 @@
 			
 			<van-swipe style="height: 150px;" :autoplay="3000" indicator-color="white">
 				<van-swipe-item style="height: 150px;" v-for="banner in banners">
-					<van-image :src="banner.img" fit="fill" />
+					<van-image :src="banner.img" fit="cover" height="150" />
 				</van-swipe-item>
 			</van-swipe>
 		</van-sticky>
@@ -27,7 +27,7 @@
 
 		<van-pull-refresh v-model="isLoading" @refresh="onRefresh">
 			<van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-				<van-cell v-for="data in list">
+				<van-cell v-for="(data,index) in list">
 					<div style="background: #fff;">
 						<van-image :src="data.img" class="item_image"></van-image>
 						<!-- <img :src="data.img" style="float: left;height: 60px;margin-left: 10px;margin-top: 15px;width: 60px;"> -->
@@ -136,7 +136,7 @@
 								dataitem.link,
 								dataitem.phone,
 								dataitem.task_name,
-								"0.5"
+								dataitem.integral
 							))
 						}
 						if (res.data.length < that.pageSize) {
@@ -230,7 +230,7 @@
 							type: 'success',
 							message: '任务接取成功'
 						});
-						that.datas.splice(index, 1)
+						that.list.splice(index, 1)
 					} else {
 						Notify({
 							type: 'danger',

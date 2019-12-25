@@ -1,11 +1,11 @@
 <template>
-	<div style="text-align: center;">
+	<div>
 		<van-nav-bar title="任务" />
-		<van-tabs swipeable="" v-model="active" sticky>
+		<van-tabs swipeable="" v-model="active" sticky @click="onClick">
 			<van-tab title="未完成">
 				<van-pull-refresh v-model="isLoading" @refresh="onRefresh">
 					<van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-						<van-cell style="padding: 16px;" v-for="data in list">
+						<van-cell style="padding: 16px;" v-for="(data,index) in list">
 							<div style="background: #fff;font-size: 13px;">
 								<van-image :src="data.img" class="item_image" style="float: left;margin-top: 17px;margin-left: 8px;"></van-image>
 								<!-- <img :src="data.img" style="float: left;height: 60px;margin-left: 10px;margin-top: 15px;width: 60px;"> -->
@@ -15,7 +15,7 @@
 									<div style="font-size: 12px;">
 										<van-button @click="openVideo(data.link)" size="small" type="primary">打开链接</van-button>
 										<van-button @click="copyUrl(data.link)" style="margin-left: 12px;" size="small" type="primary">复制链接</van-button>
-										<van-button @click="submitTask(data.ID,data.task_name,data.integral)" style="margin-left: 12px;" size="small"
+										<van-button @click="submitTask(data.ID,index)" style="margin-left: 12px;" size="small"
 										 type="primary">提交任务</van-button>
 									</div>
 								</div>
@@ -26,11 +26,17 @@
 
 			</van-tab>
 			<van-tab title="已完成">
-				<div v-for="data in list" style="padding: 2%;" class="item_bg">
-					<span>{{data.task_name}} ({{data.org}})</span> <span style='float: right;'>已完成</span>
-					<p style='color: #bbbbbb;margin-top: 8px;'>任务收益: ¥{{data.integral}}</p>
-					<p style='color: #bbbbbb;'>申请时间: {{data.add_time}}</p>
-				</div>
+				<van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+					<van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+						<van-cell style="padding: 16px;" v-for="data in list">
+							<div style="background: #fff;font-size: 14px;">
+								<span>{{data.task_name}} ({{data.org}})</span> <span style="float: right;">已完成</span>
+								<p style='color: #bbbbbb;margin-top: 4px;'>任务收益: ¥{{data.integral}}</p>
+								<p style='color: #bbbbbb;margin-top: -10px;padding-bottom: 0px;margin-bottom: 0px;'>申请时间: {{data.add_time}}</p>
+							</div>
+						</van-cell>
+					</van-list>
+				</van-pull-refresh>
 			</van-tab>
 		</van-tabs>
 
@@ -62,8 +68,11 @@
 	import {
 		post_
 	} from '../../public/js/utilHelper'
+	import {
+		Dialog
+	} from 'vant'
 
-	Vue.use(post_);
+	Vue.use(post_).use(Dialog);
 	export default {
 		data() {
 			return {
@@ -89,6 +98,11 @@
 			this.getData(0)
 		},
 		methods: {
+			onClick(name, title) {
+				this.page = 0;
+				this.finished = false;
+				this.getData(name)
+			},
 			Task: function(ID, add_time, img, link, name, task_name, weixin, integral, status, platform) {
 				var task = new Object();
 				task.ID = ID;
@@ -170,6 +184,45 @@
 				this.page = 0;
 				this.getData(this.lastStatus);
 			},
+			openVideo(url) {
+				// location.href = "webview.html?taskUrl=" + url;
+				plus.runtime.openWeb(url)
+			},
+			copyUrl(url) {
+				let oInput = document.createElement('input')
+				oInput.value = url;
+				document.body.appendChild(oInput)
+				oInput.select()
+				document.execCommand("Copy")
+				oInput.style.display = 'none'
+				document.body.removeChild(oInput)
+				window.alert('复制成功')
+			},
+			submitTask(id, index) {
+				var that = this;
+				// location.href = "submit_task.html?id=" + v1 + "&taskName=" + decodeURI(v2) + "&taskMoney=" + v3;
+				Dialog.confirm({
+					title: '提交任务',
+					message: '是否已完成任务',
+					beforeClose(action, done) {
+						if (action == 'confirm') {
+							post_('task/submit-task?access-token=' + localStorage.getItem('access-token'), {
+								id: id,
+							}, res => {
+								if (res.success) {
+									that.list.splice(index,1);
+								}
+								done();
+							})
+						} else {
+							done();
+						}
+					}
+				});
+
+			},
+			
+
 		}
 
 	}

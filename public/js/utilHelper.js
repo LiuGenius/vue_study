@@ -10,3 +10,7 @@ export function post_(url,data,callback){
 		callback(response.data)
 	})
 }
+
+export function StringToFloat(str) {
+	return parseFloat(str).toFixed(2)
+}
