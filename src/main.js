@@ -41,6 +41,7 @@ import 'vant/lib/dialog/style';
 import 'vant/lib/tag/style';
 import 'vant/lib/grid/style';
 import 'vant/lib/grid-item/style';
+import 'vant/lib/button/style';
 Vue.use(Swipe)
 	.use(SwipeItem)
 	.use(Image)
