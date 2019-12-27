@@ -130,11 +130,13 @@
 					// {name:'发布任务',img:require("../../public/img/menu_icon_rel_task.png"},
 					{
 						name: '我的任务',
-						img: require("../../public/img/menu_icon_my_task.png")
+						img: require("../../public/img/menu_icon_my_task.png"),
+						router:"/task"
 					},
 					{
 						name: '新闻公告',
-						img: require("../../public/img/menu_icon_news.png")
+						img: require("../../public/img/menu_icon_news.png"),
+						router:"/news"
 					},
 					{
 						name: '提现账户',
