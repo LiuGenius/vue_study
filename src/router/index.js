@@ -1,50 +1,24 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import login from '../views/login.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
+	{
+	  path: '/home',
+	  name: 'home',
+	  component: () => import(/* webpackChunkName: "about" */ '../views/home.vue')
+	},
   {
-    path: '/',
-    name: 'login',
-    component: login
+    path: '/playmusic',
+    name: 'playmusic',
+    component: () => import(/* webpackChunkName: "about" */ '../views/play_music.vue')
   },
   {
-    path: '/index',
-    name: 'index',
-    component: () => import(/* webpackChunkName: "about" */ '../views/index.vue')
-  },
-  {
-    path: '/task',
-    name: 'task',
-    component: () => import(/* webpackChunkName: "about" */ '../views/task.vue')
-  },
-  {
-    path: '/package',
-    name: 'package',
-    component: () => import(/* webpackChunkName: "about" */ '../views/package.vue')
-  },
-  {
-    path: '/me',
-    name: 'me',
-    component: () => import(/* webpackChunkName: "about" */ '../views/me.vue')
-  },
-  {
-    path: '/updata_history',
-    name: 'updata_history',
-    component: () => import(/* webpackChunkName: "about" */ '../views/updata_history.vue')
-  },
-  {
-    path: '/my_team',
-    name: 'my_team',
-    component: () => import(/* webpackChunkName: "about" */ '../views/my_team.vue')
-  },
-  {
-    path: '/news',
-    name: 'news',
-    component: () => import(/* webpackChunkName: "about" */ '../views/my_team.vue')
-  },
+    path: '/musicplay',
+    name: 'musicplay',
+    component: () => import(/* webpackChunkName: "about" */ '../views/music_play.vue')
+  }
 ]
 
 const router = new VueRouter({
